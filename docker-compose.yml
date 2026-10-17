@@ -1,0 +1,27 @@
+services:
+  namenode:
+    build: .
+    image: hadoop-node
+    container_name: namenode
+    hostname: namenode
+    ports: ["9870:9870", "8088:8088"]
+    volumes: ["nn-data:/opt/hadoop/data"]
+  datanode1:
+    image: hadoop-node
+    container_name: datanode1
+    hostname: datanode1
+    depends_on: [namenode]
+    volumes: ["dn1-data:/opt/hadoop/data"]
+  datanode2:
+    image: hadoop-node
+    container_name: datanode2
+    hostname: datanode2
+    depends_on: [namenode]
+    volumes: ["dn2-data:/opt/hadoop/data"]
+  datanode3:
+    image: hadoop-node
+    container_name: datanode3
+    hostname: datanode3
+    depends_on: [namenode]
+    volumes: ["dn3-data:/opt/hadoop/data"]
+volumes: { nn-data: {}, dn1-data: {}, dn2-data: {}, dn3-data: {} }
