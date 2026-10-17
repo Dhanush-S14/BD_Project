@@ -42,7 +42,12 @@ pipeline {
                 sh '''docker exec namenode bash -c "hdfs dfs -cat '/user/sales/output/stock/part-r-*' > /opt/results/stock_final.txt"'''
                 sh 'docker exec namenode python3 /opt/results/generate_sales_stock_csv.py'
                 sh 'docker exec namenode python3 /opt/results/generate_sales_report.py'
-                sh 'docker exec namenode python3 /opt/results/send_sales_report.py'
+                withCredentials([
+                    usernamePassword(credentialsId: 'gmail-cred', usernameVariable: 'SENDER_EMAIL', passwordVariable: 'APP_PASSWORD'),
+                    string(credentialsId: 'report-receiver', variable: 'RECEIVER_EMAIL')
+                ]) {
+                    sh 'docker exec -e SENDER_EMAIL -e APP_PASSWORD -e RECEIVER_EMAIL namenode python3 /opt/results/send_sales_report.py'
+                }
             }
         }
         stage('Copy Results') {
